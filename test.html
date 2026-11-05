@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>اختبار الرسايل</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400..800&family=Lalezar&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="float-bg"></div>
+
+  <main class="container">
+    <section id="denied" class="wall-shell lock-shell" style="display:none; text-align:center; margin-top: 46px;">
+      <h1 class="hero-title display">الصفحة دي مش متاحة</h1>
+      <p class="hero-sub">اللينك بيحتاج كلمة سر معينة</p>
+      <a class="btn ghost" href="index.html" style="margin-top: 20px;">الرئيسية</a>
+    </section>
+
+    <section id="testBox" style="display:none;">
+      <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+        <span class="date-chip">صفحة الاختبار</span>
+        <a class="date-chip" href="index.html" style="text-decoration:none;">الرئيسية</a>
+      </div>
+
+      <h1 class="hero-title display" style="margin-top: 18px; text-align:center;">كل الرسايل حاضرة هنا</h1>
+      <p class="hero-sub">نفس الرسايل اللي هتشوفها مريم في السكرول — بس من غير قفل</p>
+
+      <div class="wall-stats" style="margin: 20px auto 0;">
+        <div class="num" id="msgCount">0</div>
+        <div style="font-weight:800; color: var(--ink-soft);">رسالة</div>
+      </div>
+
+      <div class="wall-grid" id="wall" style="margin-top: 26px;"></div>
+
+      <div id="emptyState" class="wall-shell" style="display:none; text-align:center; margin-top: 26px;">
+        <p style="font-weight:800; color:var(--ink-soft);">لسه مفيش رسايل. أول رسالة تتبعت من صفحة الإرسال هتظهر هنا فورًا.</p>
+      </div>
+
+      <div id="dbWarn" style="margin-top: 20px;"></div>
+
+      <div style="text-align:center; margin-top: 30px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button class="btn ghost" id="refreshBtn">تحديث</button>
+      </div>
+
+      <footer>صفحة تجريبية — مش مرتبطة بأي حتة</footer>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script defer src="js/config.js"></script>
+  <script defer src="js/common.js"></script>
+  <script defer>
+    window.addEventListener("DOMContentLoaded", () => {
+      const qKey = new URLSearchParams(location.search).get("t");
+      const hKey = location.hash.replace(/^#/, "");
+      const ok = qKey === TEST_KEY || hKey === TEST_KEY;
+      document.getElementById("denied").style.display = ok ? "none" : "block";
+      if (!ok) return;
+      reportSetup(() => {});
+      document.getElementById("testBox").style.display = "block";
+
+      const wallEl = document.getElementById("wall");
+      const dateFmt = new Intl.DateTimeFormat("ar-EG", {
+        day: "numeric", month: "long", year: "numeric", hour: "numeric", minute: "2-digit",
+      });
+
+      async function load() {
+        if (!db) {
+          document.getElementById("dbWarn").innerHTML =
+            `<div class="warn-banner">الإعدادات مش جاهزة — راجع js/config.js</div>`;
+          return;
+        }
+        try {
+          const { data, error } = await db
+            .from("birthday_messages")
+            .select("*")
+            .order("created_at", { ascending: true });
+          if (error) throw error;
+
+          document.getElementById("msgCount").textContent = data.length;
+          wallEl.innerHTML = "";
+
+          data.forEach((row, i) => {
+            const card = document.createElement("article");
+            card.className = "msg-card";
+            card.style.animationDelay = `${Math.min(i * 0.08, 1.2)}s`;
+
+            const photo = row.photo_url
+              ? `<img class="msg-photo" src="${esc(row.photo_url)}" alt="صورة ${esc(row.name)}" loading="lazy" />`
+              : `<div class="msg-photo initial">${esc((row.name || "?").charAt(0))}</div>`;
+
+            card.innerHTML = `
+              ${photo}
+              <div>
+                <div class="msg-name">${esc(row.name)} <span class="love">حب ${row.hearts || 5} من 5</span></div>
+                ${row.memory ? `<div class="msg-memory">${esc(row.memory)}</div>` : ""}
+                <p class="msg-text">${esc(row.message)}</p>
+                <div class="msg-date">${dateFmt.format(new Date(row.created_at))}</div>
+                <button class="del-btn" data-id="${row.id}">مسح</button>
+              </div>`;
+            wallEl.appendChild(card);
+          });
+
+          wallEl.querySelectorAll(".del-btn").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+              if (btn.dataset.armed !== "1") {
+                btn.dataset.armed = "1";
+                btn.textContent = "متأكد؟";
+                setTimeout(() => { btn.dataset.armed = ""; btn.textContent = "مسح"; }, 2500);
+                return;
+              }
+              btn.disabled = true;
+              btn.textContent = "بيمسح…";
+              const { error } = await db.from("birthday_messages").delete().eq("id", btn.dataset.id);
+              if (error) {
+                btn.disabled = false;
+                btn.textContent = "مسح";
+                document.getElementById("dbWarn").innerHTML = `<div class="warn-banner">مش قادر يمسح: ${esc(error.message)}</div>`;
+                return;
+              }
+              btn.closest(".msg-card").remove();
+              const remaining = wallEl.querySelectorAll(".msg-card").length;
+              document.getElementById("msgCount").textContent = remaining;
+              document.getElementById("emptyState").style.display = remaining ? "none" : "block";
+            });
+          });
+
+          document.getElementById("emptyState").style.display = data.length ? "none" : "block";
+        } catch (err) {
+          console.error(err);
+          document.getElementById("dbWarn").innerHTML =
+            `<div class="warn-banner">مش قادرين يجيبوا الرسايل: ${esc(err.message)}</div>`;
+        }
+      }
+
+      document.getElementById("refreshBtn").addEventListener("click", load);
+      load();
+
+      // realtime برضه — أي رسالة جديدة هتظهر لحظًيا
+      db?.channel("test")
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "birthday_messages" },
+          () => load()
+        )
+        .subscribe();
+    });
+  </script>
+</body>
+</html>

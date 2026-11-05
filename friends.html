@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>اكتب رسالتك لمريم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400..800&family=Lalezar&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="float-bg"></div>
+
+  <main class="container">
+    <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+      <span class="date-chip">رسايل عيد ميلاد مريم</span>
+      <a class="date-chip" href="index.html" style="text-decoration:none;">الرئيسية</a>
+    </div>
+
+    <h1 class="hero-title display" style="margin-top: 18px; text-align:center;">اكتب رسالتك لمريم</h1>
+    <p class="hero-sub">
+      رسايل الناس كلها هتتفتح قدامها مع بعض،
+      الساعة 12 بالليل يوم 6 نوفمبر.
+    </p>
+
+    <div class="form-shell" style="margin-top: 30px;">
+      <form id="wishForm" novalidate>
+        <div class="field">
+          <label for="name">اسمك <small>(زي ما مريم تعرفك)</small></label>
+          <input class="input" id="name" maxlength="60" placeholder="اسمك بس" required />
+        </div>
+
+        <div class="field">
+          <label for="photo">صورة <small>(اختياري)</small></label>
+          <div class="drop" id="drop" tabindex="0">
+            <div id="dropIdle">
+              <div class="hint" style="font-weight:700;">اسحب صورة هنا أو اضغط واختارها</div>
+              <div class="hint" style="font-size:12px;">JPG أو PNG، بتتضغط تلقائيًا قبل الرفع</div>
+            </div>
+            <img id="preview" alt="معاينة الصورة" style="display:none" />
+          </div>
+          <input type="file" id="photo" accept="image/*" hidden />
+        </div>
+
+        <div class="field">
+        <label for="memory">اوصف مريم في سطر <small>(ممكن أول ذكرى بينكم أو حاجة عنها مش هتتنسى)</small></label>
+          <textarea class="textarea" id="memory" maxlength="600" required
+            placeholder="أول مرة قابلتها كانت... أو أقرب صفة توصفها"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="message">اكتب لمريم رسالة</label>
+          <textarea class="textarea" id="message" maxlength="800" required
+            placeholder="اكتب رسالة أو جملة حلوة"></textarea>
+        </div>
+
+        <div class="field">
+          <label>بتحب مريومة أد إيه؟</label>
+          <div class="love-scale" id="loveScale"></div>
+          <div class="love-hint" id="loveHint"></div>
+        </div>
+
+        <div class="error-msg" id="err"></div>
+        <div style="text-align:center; margin-top: 16px;">
+          <button type="submit" class="btn big" id="sendBtn">إرسال</button>
+        </div>
+      </form>
+
+      <div id="successBox" class="success" style="display:none">
+        <h2 class="display" style="font-size: clamp(24px,5vw,36px); color: var(--pink-strong); margin:0;">وصلت رسالتك</h2>
+        <p style="color:var(--ink-soft); margin-top:10px;">
+          كل الرسايل هتتفتح قدام مريم الساعة 12 بالليل يوم العيد.
+          خليها مفاجأة — متقولشلهاش الخبر.
+        </p>
+        <div style="margin-top: 22px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <a class="btn ghost" href="index.html">الرئيسية</a>
+          <a class="btn" id="againBtn">رسالة تانية</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="setupWarn"></div>
+    <footer>اتعمل بحب — عيد ميلاد مريم 2026</footer>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.browser.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script defer src="js/config.js"></script>
+  <script defer src="js/common.js"></script>
+  <script defer src="js/friends.js"></script>
+</body>
+</html>

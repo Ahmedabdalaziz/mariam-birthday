@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>رسايل عيد ميلاد مريم</title>
+  <meta name="description" content="كل الرسايل اللي وصلت لمريم — بتتفتح 12 بالليل" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400..800&family=Lalezar&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="float-bg"></div>
+
+  <main class="container">
+    <!-- ====== شاشة الانتظار (قبل 12 بالليل) ====== -->
+    <section id="lockScreen" class="lock-shell" style="margin-top: 46px;">
+      <div class="lock-icon"></div>
+      <h1 class="hero-title display">لسه شوية</h1>
+      <p class="hero-sub">الرسايل بتتفتح الساعة 12 بالليل يوم 6 نوفمبر — استنى مكانك</p>
+
+      <div class="countdown" data-countdown style="margin-top: 26px;"></div>
+
+      <div id="unlockBonus" style="display:none; margin-top: 26px;">
+        <div style="display:inline-flex; gap:10px; align-items:center;">
+          <input id="codeInput" class="input" placeholder="كلمة السر" style="width:180px; text-align:center;" />
+          <button class="btn" id="codeBtn">فتح</button>
+        </div>
+        <div class="error-msg" id="codeErr"></div>
+      </div>
+
+      <div style="margin-top: 30px;">
+        <a class="btn ghost" href="index.html">الرئيسية</a>
+      </div>
+    </section>
+
+    <!-- ====== سكرول الرسايل (بعد 12 بالليل) ====== -->
+    <section id="partyWall" style="display:none;">
+      <div class="wall-shell" style="margin-top: 34px; text-align:center;">
+        <span class="date-chip" id="todayChip">وصلنا</span>
+        <h1 class="hero-title display" style="margin-top: 14px;">كل سنة وانتي طيبة يا مريم</h1>
+        <p class="hero-sub">
+          كل أصحابك وحبايبك بعتوا رسايل وصور.
+          اعملي سكرول من تحت لفوق واقري على مهلك.
+        </p>
+      </div>
+
+      <div class="wall-stats" style="margin: 20px auto 0;">
+        <div class="num" id="msgCount">0</div>
+        <div style="font-weight:800; color: var(--ink-soft);">رسالة وصلت</div>
+      </div>
+
+      <div class="wall-grid" id="wall" style="margin-top: 26px;"></div>
+
+      <div id="emptyState" class="wall-shell" style="display:none; text-align:center; margin-top: 26px;">
+        <p style="font-weight:800; color:var(--ink-soft);">لسه مفيش رسايل وصلت. أول واحدة هتوصل هتظهر هنا فورًا.</p>
+      </div>
+
+      <div id="dbWarn" style="margin-top: 20px;"></div>
+
+      <div style="text-align:center; margin-top: 30px;">
+        <button class="btn ghost" id="refreshBtn">تحديث</button>
+      </div>
+    </section>
+
+    <footer>اتعمل بحب — عيد ميلاد مريم 2026</footer>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.browser.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script defer src="js/config.js"></script>
+  <script defer src="js/common.js"></script>
+  <script defer src="js/wall.js"></script>
+</body>
+</html>
